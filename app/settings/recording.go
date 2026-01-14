@@ -176,7 +176,7 @@ type recording struct {
 	OutputDir         string `path:"Select video output directory"`
 	Container         string `combo:"mp4,mkv"`
 	ShowFFmpegLogs    bool
-	SplitAudioTracks  bool   `label:"拆分音轨为独立文件" tooltip:"开启后，音乐和音效将输出为独立的WAV文件，便于后期编辑"`
+	SplitAudioTracks  bool   `label:"split audio tracks" tooltip:"separated video,music and sounds stream"`
 	MotionBlur        *motionblur
 
 	outDir *string
