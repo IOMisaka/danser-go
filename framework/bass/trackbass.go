@@ -87,7 +87,14 @@ func (track *TrackBass) AddSilence(seconds float64) {
 func (track *TrackBass) Play() {
 	track.SetVolume(settings.Audio.GeneralVolume * settings.Audio.MusicVolume)
 
-	C.BASS_Mixer_StreamAddChannel(masterMixer, track.channel, C.BASS_MIXER_CHAN_NORAMPIN|C.BASS_MIXER_CHAN_BUFFER)
+	var targetMixer C.HSTREAM
+	if settings.Recording.SplitAudioTracks && musicMixer != 0 {
+		targetMixer = musicMixer
+	} else {
+		targetMixer = masterMixer
+	}
+
+	C.BASS_Mixer_StreamAddChannel(targetMixer, track.channel, C.BASS_MIXER_CHAN_NORAMPIN|C.BASS_MIXER_CHAN_BUFFER)
 
 	track.playing = true
 	track.addedToMixer = true
@@ -98,7 +105,14 @@ func (track *TrackBass) PlayV(volume float64) {
 
 	track.playing = true
 
-	C.BASS_Mixer_StreamAddChannel(masterMixer, track.channel, C.BASS_MIXER_CHAN_NORAMPIN|C.BASS_MIXER_CHAN_BUFFER)
+	var targetMixer C.HSTREAM
+	if settings.Recording.SplitAudioTracks && musicMixer != 0 {
+		targetMixer = musicMixer
+	} else {
+		targetMixer = masterMixer
+	}
+
+	C.BASS_Mixer_StreamAddChannel(targetMixer, track.channel, C.BASS_MIXER_CHAN_NORAMPIN|C.BASS_MIXER_CHAN_BUFFER)
 	track.addedToMixer = true
 }
 

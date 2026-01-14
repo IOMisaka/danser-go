@@ -103,7 +103,11 @@ func StopFFmpeg() {
 
 	log.Println("Ffmpeg finished.")
 
-	combine()
+	if settings.Recording.SplitAudioTracks {
+		moveSeparateAudioFiles()
+	} else {
+		combine()
+	}
 }
 
 func combine() {
@@ -143,6 +147,50 @@ func combine() {
 		}
 	}
 
+	cleanup()
+}
+
+func moveSeparateAudioFiles() {
+	log.Println("Moving separate audio files to output directory...")
+	
+	tempDir := filepath.Join(settings.Recording.GetOutputDir(), output+"_temp")
+	outputDir := settings.Recording.GetOutputDir()
+	
+	// 移动视频文件
+	videoSrc := filepath.Join(tempDir, "video."+settings.Recording.Container)
+	videoDst := filepath.Join(outputDir, output+"."+settings.Recording.Container)
+	
+	if err := os.Rename(videoSrc, videoDst); err != nil {
+		log.Printf("Failed to move video file: %v", err)
+	} else {
+		log.Println("Video file moved to:", videoDst)
+	}
+	
+	// 移动音乐文件
+	musicSrc := filepath.Join(tempDir, "music.wav")
+	musicDst := filepath.Join(outputDir, output+"_music.wav")
+	
+	if err := os.Rename(musicSrc, musicDst); err != nil {
+		log.Printf("Failed to move music file: %v", err)
+	} else {
+		log.Println("Music file moved to:", musicDst)
+	}
+	
+	// 移动音效文件
+	soundSrc := filepath.Join(tempDir, "sound.wav")
+	soundDst := filepath.Join(outputDir, output+"_sound.wav")
+	
+	if err := os.Rename(soundSrc, soundDst); err != nil {
+		log.Printf("Failed to move sound file: %v", err)
+	} else {
+		log.Println("Sound file moved to:", soundDst)
+	}
+	
+	log.Println("Separate audio files moved successfully!")
+	log.Println("Video file:", videoDst)
+	log.Println("Music file:", musicDst)
+	log.Println("Sound file:", soundDst)
+	
 	cleanup()
 }
 

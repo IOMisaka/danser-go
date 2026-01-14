@@ -16,7 +16,7 @@ import (
 	"runtime"
 )
 
-var masterMixer C.HSTREAM
+var masterMixer, musicMixer C.HSTREAM
 
 var sampleRate = 44100
 
@@ -81,8 +81,18 @@ func Init(offscreen bool) {
 		C.BASS_ChannelSetAttribute(masterMixer, C.BASS_ATTRIB_BUFFER, 0)
 		C.BASS_ChannelSetDevice(masterMixer, C.BASS_GetDevice())
 
+		// 如果启用拆分音轨且是离线渲染，创建独立的音乐混合器
+		if settings.Recording.SplitAudioTracks && offscreen {
+			musicMixer = C.BASS_Mixer_StreamCreate(C.DWORD(sampleRate), 2, C.DWORD(mixerFlags))
+			C.BASS_ChannelSetAttribute(musicMixer, C.BASS_ATTRIB_BUFFER, 0)
+			C.BASS_ChannelSetDevice(musicMixer, C.BASS_GetDevice())
+		}
+
 		if !offscreen {
 			C.BASS_ChannelPlay(masterMixer, 0)
+			if musicMixer != 0 {
+				C.BASS_ChannelPlay(musicMixer, 0)
+			}
 		}
 	} else {
 		err := GetError()

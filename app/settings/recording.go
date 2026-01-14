@@ -172,11 +172,12 @@ type recording struct {
 	FLACSettings        *flacSettings      `json:"flac" label:"FLAC Settings" showif:"AudioCodec=flac"`
 	CustomAudioSettings *custom            `json:"customAudio" label:"Custom Audio Settings" showif:"AudioCodec=!"`
 	//AudioOptions        string             `label:"Audio Encoder Options"`
-	AudioFilters   string `label:"FFmpeg Audio Filters"`
-	OutputDir      string `path:"Select video output directory"`
-	Container      string `combo:"mp4,mkv"`
-	ShowFFmpegLogs bool
-	MotionBlur     *motionblur
+	AudioFilters      string `label:"FFmpeg Audio Filters"`
+	OutputDir         string `path:"Select video output directory"`
+	Container         string `combo:"mp4,mkv"`
+	ShowFFmpegLogs    bool
+	SplitAudioTracks  bool   `label:"拆分音轨为独立文件" tooltip:"开启后，音乐和音效将输出为独立的WAV文件，便于后期编辑"`
+	MotionBlur        *motionblur
 
 	outDir *string
 }
